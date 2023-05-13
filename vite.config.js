@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       // proxy API requests to a different port or hostname
-      '/api': 'http://localhost:4001'
+      '/api': 'http://192.168.101.6:8001'
     }
   }
 })

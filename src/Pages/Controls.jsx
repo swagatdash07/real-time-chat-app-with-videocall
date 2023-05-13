@@ -12,15 +12,27 @@ import {
 import { AiOutlineAudio, AiOutlineAudioMuted } from 'react-icons/ai'
 import { FiVideo, FiVideoOff } from 'react-icons/fi'
 import { useNavigate } from "react-router-dom";
-
+import {
+    useDisclosure, Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    Button,
+} from "@chakra-ui/react";
 
 function Controls({ switches }) {
     const hmsActions = useHMSActions();
     const localPeer = useHMSStore(selectLocalPeer);
     const peers = useHMSStore(selectPeers);
+    const host = localPeer.roleName === "host";
     const isLocalAudioEnabled = useHMSStore(selectIsLocalAudioEnabled);
     const isLocalVideoEnabled = useHMSStore(selectIsLocalVideoEnabled);
     const isLocalScreenShared = useHMSStore(selectIsLocalScreenShared);
+    const { isOpen: isOpenEndRoom, onOpen: onOpenEndRoom, onClose: onCloseEndRoom } = useDisclosure();
+    const { isOpen: isOpenExitRoom, onOpen: onOpenExitRoom, onClose: onCloseExitRoom } = useDisclosure();
     const SwitchAudio = async () => {
         //toggle audio enabled
         await hmsActions.setLocalAudioEnabled(!isLocalAudioEnabled);
@@ -41,18 +53,11 @@ function Controls({ switches }) {
     };
 
     const permissions = useHMSStore(selectPermissions);
-    console.log("permissions", permissions)
     const navigate = useNavigate();
     const endRoom = async () => {
-        //end the meeting
-        // try {
         const lock = false; // A value of true disallow rejoins
         const reason = "Meeting is over";
         await hmsActions.endRoom(lock, reason);
-        // } catch (error) {
-        //     // Permission denied or not connected to room
-        //     console.error(error);
-        // }
         navigate("/chats", { replace: true })
     };
 
@@ -71,22 +76,67 @@ function Controls({ switches }) {
                 {isLocalAudioEnabled ? <AiOutlineAudio /> : <AiOutlineAudioMuted />}
             </span>
 
-            <>
-                {permissions.endRoom ? (
+            {host ? (
+                <>
                     <button
                         className=" uppercase px-5 py-2 hover:bg-blue-600"
-                        onClick={endRoom}
+                        onClick={ScreenShare}
+                    >
+                        Screen Share
+                    </button>
+                    {permissions.endRoom ? (
+                        <button
+                            className=" uppercase px-5 py-2 hover:bg-blue-600"
+                            onClick={onOpenEndRoom}
+                        >
+                            Exit Meeting
+                        </button>
+                    ) : null}
+                </>
+            ) : (
+                <>
+                    <button
+                        className=" uppercase px-5 py-2 hover:bg-blue-600"
+                        onClick={onOpenExitRoom}
                     >
                         Exit Meeting
                     </button>
-                ) : <button
-                    className=" uppercase px-5 py-2 hover:bg-blue-600"
-                    onClick={ExitRoom}
-                >
-                    Exit Meeting
-                </button>}
-            </>
+                </>
+            )}
+            <Modal isOpen={isOpenEndRoom} onClose={onCloseEndRoom}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Leave Meeting ?</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        Are You Sure To Leave ?
+                    </ModalBody>
 
+                    <ModalFooter>
+                        <Button variant='ghost' mr={3} onClick={onCloseEndRoom}>
+                            No
+                        </Button>
+                        <Button colorScheme='blue' onClick={endRoom}>Yes</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+            <Modal isOpen={isOpenExitRoom} onClose={onCloseExitRoom}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Leave Meeting ?</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        Are You Sure To Leave ?
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button variant='ghost' mr={3} onClick={onCloseExitRoom}>
+                            No
+                        </Button>
+                        <Button colorScheme='blue' onClick={ExitRoom}>Yes</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </div>
     );
 }

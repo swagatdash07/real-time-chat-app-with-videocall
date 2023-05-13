@@ -24,7 +24,7 @@ function VideoSpaces({ peer, islocal, user }) {
    
     return (
         <span>
-            <span>
+            <span className="video-space">
                 <video
                     ref={videoRef}
                     autoPlay={true}
@@ -33,7 +33,7 @@ function VideoSpaces({ peer, islocal, user }) {
                     className={`object-cover h-40 w-40 rounded-lg mt-12 shadow-lg" ${islocal ? "mirror" : ""
                         }`}
                 ></video>
-                <span className=" text-white font-medium text-lg uppercase">
+                <span className="text-white font-medium text-lg uppercase text-center fw-bold">
                     <h3>{!peer?.name ? user : peer?.name}</h3>
                 </span>
             </span>

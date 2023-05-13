@@ -1,21 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     useHMSActions,
     selectHMSMessages,
     useHMSStore,
     selectLocalPeer,
     selectPeers,
-    LiveStreamingProvider,
-    useLiveStreaming
 } from "@100mslive/react-sdk";
 import Controls from "./Controls";
 import VideoTile from "./VideoTile";
 import VideoSpaces from "./VideoSpaces";
-function Room({ user }) {
+import {
+    Button, useDisclosure, Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+} from '@chakra-ui/react';
+import axios from "axios";
+function Room({ user, showConfirmation, roomID, state, token, setShowConfirmation }) {
+    const { isOpen, onOpen, onClose } = useDisclosure()
     const localPeer = useHMSStore(selectLocalPeer);
     const host = localPeer.roleName === "host";
-    const { room, client } = useLiveStreaming();
-    const [participants, setParticipants] = useState([]);
     const peers = useHMSStore(selectPeers);
     console.log("Running", peers)
     const hmsActions = useHMSActions();
@@ -30,34 +37,31 @@ function Room({ user }) {
         hmsActions.sendBroadcastMessage(inputValues);
         setInputValues("");
     };
-
     const setVisibility = (dat) => {
         isVisible(dat);
     };
-    useEffect(() => {
-        const handleParticipantJoined = (participant) => {
-            setParticipants(prevParticipants => [...prevParticipants, participant]);
-        };
+    // const handleJoinAsGuest = () => {
+    //     setShowConfirmation(false);
+    //     hmsActions.join({
+    //         userName: user?.name || "Fetching",
+    //         authToken: token,
+    //         settings: {
+    //             isAudioMuted: true,
+    //         },
+    //     });
+    // };
 
-        room.on('participant-joined', handleParticipantJoined);
-
-        return () => {
-            room.off('participant-joined', handleParticipantJoined);
-        };
-    }, [room]);
-
-    const handleDisconnect = () => {
-        // Disconnect from the room
-        room.disconnect();
-    }
-    const handleConnect = () => {
-        // Connect to the room
-        client.join({
-            authToken: '<YOUR_AUTH_TOKEN>',
-            roomId: '<YOUR_ROOM_ID>',
-        });
-    }
-    console.log("Running", localPeer)
+    // useEffect(() => {
+    //     if (!showConfirmation) {
+    //         if (state) {
+    //             if (window.confirm('Are you sure you want to add guest?')) {
+    //                 handleJoinAsGuest();
+    //             } else {
+    //                 setShowConfirmation(false);
+    //             }
+    //         }
+    //     }
+    // }, [showConfirmation, state]);
     return (
         <div className=" relative h-screen flex justify-center items-center px-12 bg-slate-800 flex-row gap-8 overflow-hidden">
             <div className=" bg-slate-600 shadow-md w-3/5 rounded-2xl">
@@ -75,32 +79,7 @@ function Room({ user }) {
                                 })}
                     </div> */}
                     <span className=" h-2/5 w-full flex flex-col gap-8 py-3 px-5">
-                        <div className=" flex flex-row w-full gap-28">
-                            <div className=" text-white w-3/5">
-                                <h3 className=" text-4xl font-black">Live</h3>
-                                <h2 className=" text-2xl font-semibold">
-                                    Live Conference meeting
-                                </h2>
-                                <span className="text-2xl mt-4">
-                                    Welcome {localPeer && localPeer.name}
-                                </span>
-                                {/* display users name */}
-                            </div>
-                            <div className=" h-40 rounded-xl w-32 flec justify-center items-center">
-                                {localPeer && <VideoTile peer={localPeer} isLocal={true} />}
-                                {peers &&
-                                    peers
-                                        .filter((peer) => !peer.isLocal)
-                                        .map((peer) => {
-                                            return (
-                                                <React.Fragment key={peer.id}>
-                                                    <VideoTile isLocal={false} peer={peer} />
-                                                </React.Fragment>
-                                            );
-                                        })}
-                                {/* Room owner video chat */}
-                            </div>
-                        </div>
+                 
                         <div className="w-max px-4 bg-slate-500 h-12 rounded-md z-20">
                             {/* Controls */}
                             <Controls switches={setVisibility} />
@@ -161,14 +140,6 @@ function Room({ user }) {
                             })}
                 </div>
             ) : null}
-            {participants.map(participant => (
-                <div key={participant.id}>
-                    <p>{participant.name}</p>
-                    <video srcObject={participant.streams[0]} autoPlay />
-                </div>
-            ))}
-            <button onClick={handleDisconnect}>Disconnect</button>
-            <button onClick={handleConnect}>Connect</button>
         </div>
     );
 }

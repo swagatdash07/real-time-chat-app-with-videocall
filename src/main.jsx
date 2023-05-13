@@ -7,7 +7,9 @@ import ChatProvider from "./Context/ChatProvider";
 import { BrowserRouter } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import { HMSRoomProvider } from "@100mslive/react-sdk";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
 root.render(
   <ChakraProvider>
     <BrowserRouter>

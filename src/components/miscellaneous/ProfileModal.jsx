@@ -12,8 +12,8 @@ import {
   IconButton,
   Text,
   Image,
+  useToast
 } from "@chakra-ui/react";
-
 import { BsFillCameraVideoFill } from "react-icons/bs"
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -21,19 +21,28 @@ const ProfileModal = ({ user, children }) => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   // const hmsActions = useHMSActions();
-  const handleRoom = async () => {  
+  console.log(user)
+  const toast = useToast()
+  const handleRoom = async () => {
     await axios.post("https://api.100ms.live/v2/rooms", {
-      // name: user?.name
       name: user?.email
     }, {
       headers: {
-        Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2ODM2MTY1MjAsImV4cCI6MTY4MzcwMjkyMCwianRpIjoiand0X25vbmNlIiwidHlwZSI6Im1hbmFnZW1lbnQiLCJ2ZXJzaW9uIjoyLCJuYmYiOjE2ODM2MTY1MjAsImFjY2Vzc19rZXkiOiI2NDU1ZWE4Mjk1ZjE5NGQ1ZTUwOTczYTAifQ.iMTTI5WFmV1TrE3MMWiwsE-C2b4y36WqBYp0hYLp864"
+        Authorization: `Bearer ${import.meta.env.VITE_MANAGEMENT_TOKEN}`
       }
     }).then((res) => {
       console.log(res)
       if (res.status === 200) {
-        navigate(`/meet/${res?.data?.id}`)
+        navigate(`/meet/${res?.data?.id}`, { state: true })
       }
+    }).catch((err) => {
+      toast({
+        title: err.response.data.message,
+        description: err.response.data.details,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      })
     })
   }
 
@@ -56,7 +65,7 @@ const ProfileModal = ({ user, children }) => {
             display="flex"
             justifyContent="center"
           >
-            {user[0]?.name}
+            {user[0] ? user[0].name : user?.name}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody
@@ -68,14 +77,14 @@ const ProfileModal = ({ user, children }) => {
             <Image
               borderRadius="full"
               boxSize="150px"
-              src={user[0]?.pic}
-              alt={user[0]?.name}
+              src={user[0] ? user[0].pic : user?.pic}
+              alt={user[0] ? user[0].name : user?.name}
             />
             <Text
               fontSize={{ base: "28px", md: "30px" }}
               fontFamily="Work sans"
             >
-              Email: {user[0]?.email}
+              Email: {user[0] ? user[0].email : user?.email}
             </Text>
           </ModalBody>
           <ModalFooter>

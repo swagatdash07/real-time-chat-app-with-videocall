@@ -15,7 +15,7 @@ import io from "socket.io-client";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
 import { BsCodeSlash } from "react-icons/bs"
-const ENDPOINT = "http://localhost:4001";
+const ENDPOINT = "http://192.168.101.6:8001";
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {

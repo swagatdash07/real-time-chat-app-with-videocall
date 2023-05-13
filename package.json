@@ -1,7 +1,6 @@
 {
   "name": "vite-react",
   "private": true,
-  "proxy": "http://localhost:4001",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -16,6 +15,7 @@
     "@emotion/react": "^11.10.8",
     "@emotion/styled": "^11.10.8",
     "axios": "^1.4.0",
+    "dotenv": "^16.0.3",
     "file-saver": "^2.0.5",
     "framer-motion": "^10.12.7",
     "react": "^18.2.0",

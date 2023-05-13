@@ -40,8 +40,8 @@ const Login = () => {
       };
 
       const { data } = await axios.post(
-        "/api/user/login",
-        { email, password },
+        "http://192.168.101.6:8001/api/signin",
+        { email, password, "sub_domain": "rkit" },
         config
       );
 
@@ -53,7 +53,7 @@ const Login = () => {
         isClosable: true,
         position: "bottom",
       });
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      localStorage.setItem("userInfo", JSON.stringify(data.user));
       setLoading(false);
       navigate("/chats");
     } catch (error) {

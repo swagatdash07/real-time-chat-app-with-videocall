@@ -566,3 +566,7 @@ body {
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
+.video-space {
+  float: left;
+  margin: 1%;
+}
