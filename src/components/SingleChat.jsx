@@ -11,11 +11,12 @@ import ProfileModal from "./miscellaneous/ProfileModal";
 import ScrollableChat from "./ScrollableChat";
 import Lottie from "react-lottie";
 import animationData from "../animations/typing.json";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
 import { BsCodeSlash } from "react-icons/bs"
-const ENDPOINT = "http://192.168.101.6:8001";
+import { url, ApiConfig } from "../config/ApiConfig";
+const ENDPOINT = url;
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
@@ -46,13 +47,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     try {
       const config = {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `${user.token}`,
         },
       };
 
       setLoading(true);
 
-      const { data } = await axios.get(`/api/message/${selectedChat._id}`, config);
+      const { data } = await axios.get(`${ApiConfig.getMessage}/${selectedChat._id}`, config);
       setMessages(data);
       setLoading(false);
 
@@ -69,7 +70,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }
   };
   const [file, setFile] = useState(null);
-
   // Set the worker URL for PDF.js
   const handleFile = async (event) => {
     const selectedFile = event.target.files[0];
@@ -124,12 +124,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         const config = {
           headers: {
             "Content-type": "application/json",
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `${user.token}`,
           },
         };
         setNewMessage("");
         const { data } = await axios.post(
-          "/api/message",
+          `${ApiConfig.getMessage}`,
           {
             content: newMessage,
             chatId: selectedChat,
@@ -174,11 +174,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       const config = {
         headers: {
           "Content-type": "multipart/form-data",
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `${user.token}`,
         },
       };
       setNewMessage("");
-      const { data } = await axios.post("/api/message", formData, config);
+      const { data } = await axios.post(`${ApiConfig.getMessage}`, formData, config);
+      console.log("data", data)
       socket.emit("new message", data);
       setMessages([...messages, data]);
       setUploadLoading();
@@ -238,12 +239,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       const config = {
         headers: {
           "Content-type": "application/json",
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `${user.token}`,
         },
       };
       setNewMessage("");
       const { data } = await axios.post(
-        "/api/message",
+        `${ApiConfig.getMessage}`,
         {
           content: newMessage,
           chatId: selectedChat,
@@ -366,8 +367,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 <Button onClick={onCloseModal2} mr={3}>
                   Cancel
                 </Button>
-                <Button onClick={sendCode} colorScheme="blue" isDisabled={uploadLoading ? true : false}>
-                  {uploadLoading ? "Uploading..." : "Send"}
+                <Button onClick={sendCode} colorScheme="blue" isDisabled={codeLoading ? true : false}>
+                  {codeLoading ? "sending ..." : "Send"}
                 </Button>
               </ModalFooter>
             </ModalContent>

@@ -21,7 +21,7 @@ import { useState } from "react";
 import { ChatState } from "../../Context/ChatProvider";
 import UserBadgeItem from "../userAvatar/UserBadgeItem";
 import UserListItem from "../userAvatar/UserListItem";
-
+import { ApiConfig } from "../../config/ApiConfig";
 const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [groupChatName, setGroupChatName] = useState();
@@ -43,10 +43,10 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
       setLoading(true);
       const config = {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `${user.token}`,
         },
       };
-      const { data } = await axios.get(`/api/user?search=${search}`, config);
+      const { data } = await axios.get(`${ApiConfig.searchUser}?search=${search}`, config);
       console.log(data);
       setLoading(false);
       setSearchResult(data);
@@ -70,11 +70,11 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
       setRenameLoading(true);
       const config = {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `${user.token}`,
         },
       };
       const { data } = await axios.put(
-        `/api/chat/rename`,
+        `${ApiConfig.renameGroup}`,
         {
           chatId: selectedChat._id,
           chatName: groupChatName,
@@ -128,7 +128,7 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
       setLoading(true);
       const config = {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `${user.token}`,
         },
       };
       const { data } = await axios.put(
@@ -173,7 +173,7 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
       setLoading(true);
       const config = {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `${user.token}`,
         },
       };
       const { data } = await axios.put(

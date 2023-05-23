@@ -6,7 +6,7 @@ var vite_config_default = defineConfig({
   server: {
     proxy: {
       // proxy API requests to a different port or hostname
-      "/api": "http://192.168.101.6:8001"
+      "/api": "https://api.redesk.in"
     }
   }
 });

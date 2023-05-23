@@ -2,11 +2,11 @@ import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { VStack } from "@chakra-ui/layout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useToast } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { ApiConfig } from "../../config/ApiConfig";
 const Login = () => {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
@@ -14,8 +14,30 @@ const Login = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [loading, setLoading] = useState(false);
-
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  console.log(token) 
   const navigate = useNavigate();
+  useEffect(() => {
+    if (token) {
+      const getUser = async () => {
+        await axios.get(ApiConfig.redeskLogin, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }).then((res) => {
+          console.log(res)
+          if (res.status === 200) {
+            localStorage.setItem("userInfo", JSON.stringify(res?.data?.user));
+            navigate("/chats")
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+      }
+      getUser();
+    }
+  }, []);
 
   const submitHandler = async () => {
     setLoading(true);
@@ -40,12 +62,11 @@ const Login = () => {
       };
 
       const { data } = await axios.post(
-        "http://192.168.101.6:8001/api/signin",
-        { email, password, "sub_domain": "rkit" },
+        ApiConfig.Login,
+        { email, password },
         config
       );
-
-      // console.log(JSON.stringify(data));
+      console.log(data);
       toast({
         title: "Login Successful",
         status: "success",
@@ -53,7 +74,7 @@ const Login = () => {
         isClosable: true,
         position: "bottom",
       });
-      localStorage.setItem("userInfo", JSON.stringify(data.user));
+      localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
       navigate("/chats");
     } catch (error) {

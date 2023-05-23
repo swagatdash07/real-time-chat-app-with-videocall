@@ -8,9 +8,8 @@ import ChatLoading from "./ChatLoading";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
 import { Button } from "@chakra-ui/react";
 import { ChatState } from "../Context/ChatProvider";
-
+import { ApiConfig } from "../config/ApiConfig";
 const MyChats = ({ fetchAgain }) => {
-  const [loggedUser, setLoggedUser] = useState();
   const { selectedChat, setSelectedChat, user, chats, setChats, chatAction, setChatAction } = ChatState();
 
   const toast = useToast();
@@ -20,11 +19,10 @@ const MyChats = ({ fetchAgain }) => {
     try {
       const config = {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `${user.token}`,
         },
       };
-
-      const { data } = await axios.get("/api/chat", config);
+      const { data } = await axios.get(ApiConfig.getAllChat, config);
       setChats(data);
     } catch (error) {
       toast({
@@ -38,14 +36,11 @@ const MyChats = ({ fetchAgain }) => {
     }
   };
 
+  // console.log(selectedChat)
   useEffect(() => {
-    setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
     // eslint-disable-next-line
   }, [fetchAgain]);
-  // const handleScroll = () => {
-  //   alert("okkkk")
-  // }
   return (
     <Box
       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
@@ -93,6 +88,7 @@ const MyChats = ({ fetchAgain }) => {
           <Stack overflowY="scroll" >
             {chats.map((chat) => {
               // console.log(chat.latestMessage.file?.split(".")[1])
+              // console.log(chat)
               return (
                 <Box
                   key={chat._id}
@@ -106,12 +102,12 @@ const MyChats = ({ fetchAgain }) => {
                 >
                   <Text>
                     {!chat.isGroupChat
-                      ? getSender(loggedUser, chat.users)
+                      ? getSender(user, chat.users)
                       : `${chat.chatName} (Group)`}
                   </Text>
                   {chat.latestMessage && (
                     <Text fontSize="xs">
-                      <b>{chat.latestMessage.sender.name === loggedUser?.name ? "me" : chat.latestMessage.sender.name} : </b>
+                      <b>{chat.latestMessage?.sender?.email === user?.email ? "me" : chat.latestMessage?.sender?.name} : </b>
                       {chat.latestMessage.file?.split(".")[1] !== "pdf" && chat.latestMessage.content === undefined ? "Image" : chat.latestMessage.file?.split(".")[1] === "pdf" && chat.latestMessage.content === undefined ? "PDF" : chat.latestMessage.content?.length > 50
                         ? chat.latestMessage.content.substring(0, 51) + "..."
                         : chat.latestMessage.content}

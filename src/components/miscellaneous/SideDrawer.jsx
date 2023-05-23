@@ -32,6 +32,9 @@ import { Effect } from "react-notification-badge";
 import { getSender } from "../../config/ChatLogics";
 import UserListItem from "../userAvatar/UserListItem";
 import { ChatState } from "../../Context/ChatProvider";
+import { ApiConfig } from "../../config/ApiConfig";
+import { CiSearch } from "react-icons/ci";
+import { IoArrowBackOutline } from "react-icons/io5"
 function SideDrawer() {
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
@@ -72,11 +75,11 @@ function SideDrawer() {
 
       const config = {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `${user.token}`,
         },
       };
 
-      const { data } = await axios.get(`/api/user?search=${search}`, config);
+      const { data } = await axios.get(`${ApiConfig.searchUser}?search=${search}`, config);
       console.log(data)
       setLoading(false);
       setSearchResult(data);
@@ -100,10 +103,10 @@ function SideDrawer() {
       const config = {
         headers: {
           "Content-type": "application/json",
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `${user.token}`,
         },
       };
-      const { data } = await axios.post(`/api/chat`, { userId }, config);
+      const { data } = await axios.post(ApiConfig.getAllChat, { userId }, config);
 
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChat(data);
@@ -134,10 +137,10 @@ function SideDrawer() {
       >
         <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
           <Button variant="ghost" onClick={onOpen}>
-            <i className="fas fa-search"></i>
             <Text display={{ base: "none", md: "flex" }}>
               Search User
             </Text>
+            <CiSearch />
           </Button>
         </Tooltip>
         <Box>
@@ -192,7 +195,8 @@ function SideDrawer() {
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
+
+          <DrawerHeader borderBottomWidth="1px"><IoArrowBackOutline onClick={onClose} />Search Users</DrawerHeader>
           <DrawerBody>
             <Box display="flex" pb={2}>
               <Input

@@ -9,7 +9,7 @@ const Chatpage = () => {
   const [fetchAgain, setFetchAgain] = useState(false);
   const { user } = ChatState();
   useEffect(() => {
-    navigator.mediaDevices.getUserMedia({ video: true })
+    navigator?.mediaDevices?.getUserMedia({ video: true })
       .then(function (stream) {
         // get the video track
         const videoTrack = stream.getVideoTracks()[0];
@@ -21,6 +21,7 @@ const Chatpage = () => {
         console.log('Error accessing camera:', error);
       })
   }, [])
+  
   return (
     <div style={{ width: "100%" }}>
       {user && <SideDrawer />}

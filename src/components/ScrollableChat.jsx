@@ -14,13 +14,14 @@ import { Box, Button, Image, useBreakpointValue } from "@chakra-ui/react";
 import { saveAs } from "file-saver";
 import { Prism } from 'react-syntax-highlighter';
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { url } from '../config/ApiConfig';
 
 const ScrollableChat = ({ messages }) => {
   const { user, chatAction } = ChatState();
   // console.log(selectedChat)
   const isMobile = useBreakpointValue({ base: true, md: false });
   const downloadFiles = (file) => {
-    let url = `http://192.168.101.6:8001${file}`
+    let url = `${url}${file}`
     let fileName = file.split("/")[2]
     saveAs(url, fileName);
   }
@@ -60,8 +61,8 @@ const ScrollableChat = ({ messages }) => {
               {m.file && m.file?.split(".")[1] !== "pdf" && <Box display="flex" justifyContent="end"  >
                 <DownloadIcon boxSize={5} border='1px' borderColor='#B9F5D0' borderRadius="50" cursor="pointer" onClick={() => downloadFiles(m.file)} />
               </Box>}
-              {m.file?.split(".")[1] !== "pdf" && !m?.content && m.contentType !== "code" ? <Image w='200px' src={`http://192.168.101.6:8001${m?.file}`} alt="chat-img" /> : m.file?.split(".")[1] === "pdf" && !m?.content ? <iframe
-                src={`http://192.168.101.6:8001${m?.file}`}
+              {m.file?.split(".")[1] !== "pdf" && !m?.content && m.contentType !== "code" ? <Image w='200px' src={`${url}${m?.file}`} alt="chat-img" /> : m.file?.split(".")[1] === "pdf" && !m?.content ? <iframe
+                src={`${url}${m?.file}`}
                 title="PDF Preview"
                 width="100%"
                 height="400px"
