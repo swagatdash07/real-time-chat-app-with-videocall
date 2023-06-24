@@ -14,18 +14,21 @@ import {
   Image,
   useToast
 } from "@chakra-ui/react";
+import { ChatState } from "../../Context/ChatProvider";
 import { BsFillCameraVideoFill } from "react-icons/bs"
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-const ProfileModal = ({ user, children }) => {
+const ProfileModal = ({ users, children }) => {
+  // console.log(users)
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   // const hmsActions = useHMSActions();
-  console.log(user)
+  const { user } = ChatState();
+  // console.log(user)
   const toast = useToast()
   const handleRoom = async () => {
     await axios.post("https://api.100ms.live/v2/rooms", {
-      name: user?.email
+      name: users?.email
     }, {
       headers: {
         Authorization: `Bearer ${import.meta.env.VITE_MANAGEMENT_TOKEN}`
@@ -45,14 +48,14 @@ const ProfileModal = ({ user, children }) => {
       })
     })
   }
-
+  // console.log(users)
   return (
     <>
       {children ? (
         <span onClick={onOpen}>{children}</span>
       ) : (
         <span>
-          <IconButton icon={<BsFillCameraVideoFill />} onClick={handleRoom} />
+          {/* <IconButton icon={<BsFillCameraVideoFill />} onClick={handleRoom} /> */}
           <IconButton icon={<ViewIcon />} onClick={onOpen} mx="4" />
         </span>
       )}
@@ -60,12 +63,13 @@ const ProfileModal = ({ user, children }) => {
         <ModalOverlay />
         <ModalContent h="410px">
           <ModalHeader
-            fontSize="40px"
+            fontSize="30px"
             fontFamily="Work sans"
             display="flex"
             justifyContent="center"
           >
-            {user[0] ? user[0].name : user?.name}
+            {users.length === undefined ? users?.name : user?._id === users[0]?._id ? users[1]?.name : users[0]?.name}
+            {/* {user?._id === users[0]?._id ? users[1]?.name : users[0]?.name} */}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody
@@ -77,19 +81,17 @@ const ProfileModal = ({ user, children }) => {
             <Image
               borderRadius="full"
               boxSize="150px"
-              src={user[0] ? user[0].pic : user?.pic}
-              alt={user[0] ? user[0].name : user?.name}
+              src={users.length === undefined ? users?.pic : user?._id === users[0]?._id ? users[1]?.pic : users[0]?.pic}
+              alt={users.length === undefined ? users?.name : user?._id === users[0]?._id ? users[1]?.name : users[0]?.name}
             />
             <Text
               fontSize={{ base: "28px", md: "30px" }}
               fontFamily="Work sans"
+              width="100%"
             >
-              Email: {user[0] ? user[0].email : user?.email}
+              Email: {users.length === undefined ? users?.email : user?._id === users[0]?._id ? users[1]?.email : users[0]?.email}
             </Text>
           </ModalBody>
-          <ModalFooter>
-            <Button onClick={onClose}>Close</Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

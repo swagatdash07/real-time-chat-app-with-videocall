@@ -16,7 +16,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
-  console.log(token) 
+  // console.log(token) 
   const navigate = useNavigate();
   useEffect(() => {
     if (token) {
@@ -26,7 +26,7 @@ const Login = () => {
             Authorization: `Bearer ${token}`
           }
         }).then((res) => {
-          console.log(res)
+          // console.log(res)
           if (res.status === 200) {
             localStorage.setItem("userInfo", JSON.stringify(res?.data?.user));
             navigate("/chats")
@@ -62,8 +62,8 @@ const Login = () => {
       };
 
       const { data } = await axios.post(
-        ApiConfig.Login,
-        { email, password },
+        ApiConfig.signinwithorgs,
+        { email, password, sub_domain: "Apptm" },
         config
       );
       console.log(data);
@@ -74,7 +74,7 @@ const Login = () => {
         isClosable: true,
         position: "bottom",
       });
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      localStorage.setItem("userInfo", JSON.stringify(data?.user));
       setLoading(false);
       navigate("/chats");
     } catch (error) {

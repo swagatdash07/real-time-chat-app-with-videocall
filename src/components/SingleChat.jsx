@@ -43,7 +43,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   // console.log(selectedChat)
   const fetchMessages = async () => {
     if (!selectedChat) return;
-
+    // console.log(selectedChat)
     try {
       const config = {
         headers: {
@@ -56,7 +56,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       const { data } = await axios.get(`${ApiConfig.getMessage}/${selectedChat._id}`, config);
       setMessages(data);
       setLoading(false);
-
       socket.emit("join chat", selectedChat._id);
     } catch (error) {
       toast({
@@ -73,7 +72,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   // Set the worker URL for PDF.js
   const handleFile = async (event) => {
     const selectedFile = event.target.files[0];
-    console.log(selectedFile)
+    // console.log(selectedFile)
     if (selectedFile.type.split("/")[0] === "image") {
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -165,7 +164,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [uploadLoading, setUploadLoading] = useState(false)
   const sendFile = async () => {
     setUploadLoading(true)
-    console.log("file", file);
+    // console.log("file", file);
     const formData = new FormData();
     formData.append("chatId", JSON.stringify(selectedChat));
     formData.append("file", file);
@@ -179,7 +178,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       };
       setNewMessage("");
       const { data } = await axios.post(`${ApiConfig.getMessage}`, formData, config);
-      console.log("data", data)
+      // console.log("data", data)
       socket.emit("new message", data);
       setMessages([...messages, data]);
       setUploadLoading();
@@ -226,13 +225,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         Notification.requestPermission().then((permission) => {
           if (permission === "granted") {
             new Notification(`You got a new messages from ${name?.current}`);
+          } else {
+            new Notification(`Please accept the notification popup`)
           }
-        });
+        }).catch((error) => {
+          new Notification(`got error in notification`, error);
+        })
       }
     };
   });
   const [codeLoading, setCodeLoading] = useState(false);
-  const sendCode = async (event) => {
+  const sendCode = async () => {
     setChatAction(true);
     setCodeLoading(true)
     try {
@@ -295,7 +298,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               (!selectedChat.isGroupChat ? (
                 <>
                   {getSender(user, selectedChat.users)}
-                  <ProfileModal user={(user, selectedChat.users)} />
+                  <ProfileModal users={(user, selectedChat.users)} />
                 </>
               ) : (
                 <>

@@ -16,6 +16,7 @@ const MyChats = ({ fetchAgain }) => {
 
   const fetchChats = async () => {
     // console.log(user._id);
+    console.log("This is working")
     try {
       const config = {
         headers: {

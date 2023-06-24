@@ -21,9 +21,9 @@ const ScrollableChat = ({ messages }) => {
   // console.log(selectedChat)
   const isMobile = useBreakpointValue({ base: true, md: false });
   const downloadFiles = (file) => {
-    let url = `${url}${file}`
+    let url2 = `${url}${file}`
     let fileName = file.split("/")[2]
-    saveAs(url, fileName);
+    saveAs(url2, fileName);
   }
   const scrollableFeedRef = useRef();
   const scrollToBottom = () => {
@@ -48,6 +48,7 @@ const ScrollableChat = ({ messages }) => {
                   />
                 </Tooltip>
               )}
+            {/* {console.log(m)} */}
             <span
               style={{
                 backgroundColor: `${m.contentType === "code" ? "transparent" : m.sender._id === user._id && m.file ? "#28272445" : m.sender._id !== user._id && m.file ? "#fff" : m.sender._id === user._id ? "#B9F5D0" : "#fff"}`,

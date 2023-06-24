@@ -80,7 +80,7 @@ function SideDrawer() {
       };
 
       const { data } = await axios.get(`${ApiConfig.searchUser}?search=${search}`, config);
-      console.log(data)
+      // console.log(data)
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
@@ -96,8 +96,8 @@ function SideDrawer() {
   };
 
   const accessChat = async (userId) => {
-    console.log(userId);
-
+    // console.log(userId);
+    // console.log("This is working")
     try {
       setLoadingChat(true);
       const config = {
@@ -182,7 +182,7 @@ function SideDrawer() {
               />
             </MenuButton>
             <MenuList>
-              <ProfileModal user={user}>
+              <ProfileModal users={user}>
                 <MenuItem>My Profile</MenuItem>
               </ProfileModal>
               <MenuDivider />
